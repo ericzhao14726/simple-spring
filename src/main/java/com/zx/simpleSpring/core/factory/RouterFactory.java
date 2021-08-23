@@ -2,7 +2,6 @@ package com.zx.simpleSpring.core.factory;
 
 import com.zx.simpleSpring.annotation.mvc.PostMapping;
 import com.zx.simpleSpring.annotation.mvc.RestController;
-import com.zx.simpleSpring.core.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.zx.simpleSpring.annotation.mvc.GetMapping;
@@ -12,6 +11,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import io.netty.handler.codec.http.HttpMethod;
+
+import static com.zx.simpleSpring.core.factory.ClassFactory.CLASS_CONTAINER;
 
 /**
  * 路由工厂
@@ -26,29 +27,28 @@ public class RouterFactory {
      * 加载路由
      */
     public static void load() {
-        Application.CLASS_CONTAINER.values().forEach(cs -> cs.forEach(c -> {
+        CLASS_CONTAINER.values().forEach(cs -> cs.forEach(c -> {
             if (c.isAnnotationPresent(RestController.class)) {
                 RestController annotation = c.getAnnotation(RestController.class);
                 String baseUrl = annotation.value();
                 Method[] methods = c.getMethods();
                 for (Method method : methods) {
-                    loadUrlForMethod(baseUrl, method, GetMapping.class);
-                    loadUrlForMethod(baseUrl, method, GetMapping.class);
+                    loadUrlForMethod(baseUrl, method);
                 }
             }
         }));
     }
 
-    private static void loadUrlForMethod(String baseUrl, Method m, Class<? extends Annotation> c) {
-            if (c.isAnnotationPresent(GetMapping.class)) {
-                GetMapping annotation = (GetMapping)m.getAnnotation(c);
+    private static void loadUrlForMethod(String baseUrl, Method m) {
+            if (m.isAnnotationPresent(GetMapping.class)) {
+                GetMapping annotation = (GetMapping)m.getAnnotation(GetMapping.class);
                 String url = annotation.value();
                 addRouter(baseUrl + url, m, HttpMethod.GET);
 
             }
 
-            if (c.isAnnotationPresent(PostMapping.class)) {
-                PostMapping annotation = (PostMapping)m.getAnnotation(c);
+            if (m.isAnnotationPresent(PostMapping.class)) {
+                PostMapping annotation = (PostMapping)m.getAnnotation(PostMapping.class);
                 String url = annotation.value();
                 addRouter(baseUrl + url, m, HttpMethod.POST);
         }
@@ -60,8 +60,15 @@ public class RouterFactory {
                 throw new RuntimeException("router container has contains a router name:" + url + "");
             }
         });
-        Map<String, Method> map = new HashMap<>();
+        Map<String, Method> map = ROUTER_CONTAINER.get(hm);
+        if (null == map) {
+            map = new HashMap<>();
+        }
         map.put(url, m);
         ROUTER_CONTAINER.put(hm, map);
+    }
+
+    public static Method getRouter(HttpMethod m, String url) {
+         return ROUTER_CONTAINER.get(m).get(url);
     }
 }

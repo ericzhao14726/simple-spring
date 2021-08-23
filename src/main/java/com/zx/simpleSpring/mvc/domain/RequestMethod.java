@@ -23,4 +23,8 @@ public class RequestMethod {
         this.url = uri;
         this.paramGet = res;
     }
+
+    public RequestMethod(String uri) {
+        this.url = uri;
+    }
 }

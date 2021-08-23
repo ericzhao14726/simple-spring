@@ -2,6 +2,8 @@ package com.zx.simpleSpring.httpServer;
 
 import com.zx.simpleSpring.mvc.handler.HttpHandlerFactory;
 import com.zx.simpleSpring.mvc.handler.request.RequestHandler;
+import com.zx.simpleSpring.mvc.handler.response.factory.ResponseHandlerFactory;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -11,6 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 
 @ChannelHandler.Sharable
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -24,12 +29,19 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         logger.info(method.name());
         logger.info(msg.content().toString());
         RequestHandler requestHandle = HttpHandlerFactory.getRequestHandle(msg);
+        FullHttpResponse fullHttpResponse;
         try {
-            requestHandle.handler(msg);
+            fullHttpResponse = requestHandle.handler(msg);
         } catch (Exception e) {
-            logger.info("http request fail -> {}", e.getMessage());
+            fullHttpResponse = ResponseHandlerFactory.error(HttpResponseStatus.INTERNAL_SERVER_ERROR, e.toString());
         }
-
+        boolean keepAlive = HttpUtil.isKeepAlive(msg);
+        if (keepAlive) {
+            fullHttpResponse.headers().set(CONNECTION, KEEP_ALIVE);
+            ctx.write(fullHttpResponse);
+        } else {
+            ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+        }
 
     }
 

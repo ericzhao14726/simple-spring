@@ -9,27 +9,19 @@ import com.zx.demo.Test;
 import com.zx.simpleSpring.annotation.ioc.ComponentScan;
 import com.zx.simpleSpring.httpServer.Server;
 import com.zx.simpleSpring.util.BannerUtil;
-
-import java.lang.annotation.Annotation;
 import java.util.*;
 
 
 import static sun.invoke.util.VerifyAccess.getPackageName;
 
-public class Application {
-    public static Logger logger = LoggerFactory.getLogger(Application.class);
+public class ApplicationContext {
+    public static Logger logger = LoggerFactory.getLogger(ApplicationContext.class);
 
-    public static Application APPLICATION = new Application();
-
-    public static Map<Class<? extends Annotation>, Set<Class<?>>> CLASS_CONTAINER = new HashMap<>();
-
-    public static Map<String, Object> BEAN_CONTAINER = new HashMap<>();
-
+    public static ApplicationContext APPLICATIONContext = new ApplicationContext();
 
     public static void run(Class<Test> c, String[] args) {
-        APPLICATION.run(c);
+        APPLICATIONContext.run(c);
     }
-
 
     public void run(Class<Test> c) {
         long startTime = new Date().getTime();

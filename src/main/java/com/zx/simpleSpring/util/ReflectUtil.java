@@ -6,6 +6,8 @@ import org.reflections.scanners.FieldAnnotationsScanner;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -33,5 +35,13 @@ public class ReflectUtil {
     public static <T> Set<Class<? extends T>> getImplements(String[] packages, Class<T> c) {
         Reflections reflections = new Reflections(packages);
         return reflections.getSubTypesOf(c);
+    }
+
+    public static Object executeMethod(Object o, Method m, Object... args) throws InvocationTargetException, IllegalAccessException {
+        return m.invoke(o, args);
+    }
+
+    public static void executeMethodVoid(Object o, Method m, Object... args) throws InvocationTargetException, IllegalAccessException {
+        m.invoke(o, args);
     }
 }

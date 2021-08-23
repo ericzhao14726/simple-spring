@@ -38,13 +38,18 @@
             <artifactId>reflections</artifactId>
             <version>0.9.11</version>
         </dependency>
-        <!--n-->
+        <!--netty-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.55.Final</version>
         </dependency>
-
+        <!--fastJson-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.3</version>
+        </dependency>
     </dependencies>
 
 

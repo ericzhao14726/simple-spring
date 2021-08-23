@@ -1,22 +1,17 @@
 package com.zx.demo.service.impl;
 
-import com.zx.simpleSpring.annotation.ioc.Autowired;
 import com.zx.demo.domain.User;
-import com.zx.demo.mapper.UserMapper;
 import com.zx.demo.service.UserService;
 
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
-
     @Override
     public User get(Integer id) {
-        return userMapper.get(id);
+        return new User(1,"张三","男","程序员","天津");
     }
 
     @Override
     public User list() {
-        return userMapper.list();
+        return new User(1, "张三", "男", "程序员", "天津");
     }
 }
