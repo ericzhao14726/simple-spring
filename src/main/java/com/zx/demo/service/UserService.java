@@ -10,4 +10,6 @@ public interface UserService {
     User get(Integer id);
 
     User list();
+
+    User insert(User user);
 }

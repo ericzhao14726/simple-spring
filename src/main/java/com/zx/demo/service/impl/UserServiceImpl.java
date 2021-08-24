@@ -14,4 +14,9 @@ public class UserServiceImpl implements UserService {
     public User list() {
         return new User(1, "张三", "男", "程序员", "天津");
     }
+
+    @Override
+    public User insert(User user) {
+        return user;
+    }
 }

@@ -6,13 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static <T> T parseToObject(String jsonStr, Class<T> tClass) {
-        T result = null;
-        try {
-            result = mapper.readValue(jsonStr, tClass);
-        } catch (JsonProcessingException ignored) {
-        }
-        return result;
+    public static <T> T parseToObject(String jsonStr, Class<T> tClass) throws JsonProcessingException {
+        return mapper.readValue(jsonStr, tClass);
     }
 
     public static byte[] toByte(Object o) {
